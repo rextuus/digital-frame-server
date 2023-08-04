@@ -1,0 +1,54 @@
+$primary-color: #dedede;
+$form-color: #a1a1a1;
+$body-color: #363636;
+$send-button-color: #cc2e2e;
+$font-size: 6em;
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: $body-color;
+    padding: 50px;
+}
+
+h1 {
+    color: $primary-color;
+    font-size: 5.0em;
+    text-align: center;
+}
+
+.custom-file-label {
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    padding: 9px 12px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    color: #555;
+    font-size: $font-size;
+}
+
+/* Hide the default file input */
+.custom-file-label + .custom-file-input {
+    display: none;
+}
+
+.image-area{
+    width: 100%;
+    max-width: 100%;
+
+    > img{
+        max-width: 100%;
+        max-height: 1000px;
+    }
+}
+
+.btn{
+    margin-top: 20px;
+    font-size: $font-size;
+    padding: 9px 12px;
+}
+
+
