@@ -10,5 +10,16 @@ namespace App\Service\User\Form;
  */
 class UserCreateData extends UserData
 {
+    private string $password;
 
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): UserCreateData
+    {
+        $this->password = $password;
+        return $this;
+    }
 }

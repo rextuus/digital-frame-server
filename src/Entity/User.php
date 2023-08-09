@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -31,6 +32,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Image::class)]
     private Collection $images;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $lastSeen = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $description = null;
 
     public function __construct()
     {
@@ -133,6 +140,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $image->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastSeen(): ?\DateTimeInterface
+    {
+        return $this->lastSeen;
+    }
+
+    public function setLastSeen(\DateTimeInterface $lastSeen): static
+    {
+        $this->lastSeen = $lastSeen;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

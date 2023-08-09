@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-use App\Repository\ImageRepository;
 use App\Service\CloudinaryApiGateway;
+use App\Service\Image\Form\ImageData;
+use App\Service\Image\ImageService;
+use DateTime;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -19,19 +20,30 @@ class ImageUploadHandler
 {
     public function __construct(
         private CloudinaryApiGateway $cloudinaryApiGateway,
-        private ImageRepository $imageRepository,
+        private ImageService $imageService,
         private LoggerInterface $logger,
-        private ParameterBagInterface $parameterBag
-    )
-    {
+    ) {
     }
 
     public function __invoke(ImageUpload $message): void
     {
+        $image = $this->imageService->find($message->getImageId());
 
-        $image = $this->imageRepository->find($message->getImageId());
-        $result = $this->cloudinaryApiGateway->uploadImage($this->parameterBag->get('kernel.project_dir').'/public/'.$image->getFilePath());
+        $result = $this->cloudinaryApiGateway->uploadImage($image);
 
-        $this->logger->info($image->getFilePath().': '.$result);
+        if ($result) {
+            $infos = $result->getArrayCopy();
+            $url = $infos['secure_url'];
+
+            $updateData = (new ImageData())->initFrom($image);
+            $updateData->setCdnUrl($url);
+            $updateData->setUploaded(new DateTime());
+            $this->imageService->update($image, $updateData);
+
+            $this->logger->info("Upload finished");
+            $this->logger->info($image->getFilePath() . ': ' . $url);
+            return;
+        }
+        $this->logger->error("Upload failed");
     }
 }

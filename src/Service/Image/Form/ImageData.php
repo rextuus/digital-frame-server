@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Image;
+namespace App\Service\Image\Form;
 
+use App\Entity\Image;
 use App\Entity\User;
 use DateTimeInterface;
 
@@ -13,24 +14,12 @@ use DateTimeInterface;
  */
 class ImageData
 {
-    private string $name;
     private string $filePath;
-    private string $cdnUrl;
-    private DateTimeInterface $created;
-    private DateTimeInterface $displayed;
-    private DateTimeInterface $delivered;
+    private ?string $cdnUrl = null;
+    private ?DateTimeInterface $displayed = null;
+    private ?DateTimeInterface $delivered = null;
+    private ?DateTimeInterface $uploaded = null;
     private User $owner;
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): ImageData
-    {
-        $this->name = $name;
-        return $this;
-    }
 
     public function getFilePath(): string
     {
@@ -43,45 +32,34 @@ class ImageData
         return $this;
     }
 
-    public function getCdnUrl(): string
+    public function getCdnUrl(): ?string
     {
         return $this->cdnUrl;
     }
 
-    public function setCdnUrl(string $cdnUrl): ImageData
+    public function setCdnUrl(?string $cdnUrl): ImageData
     {
         $this->cdnUrl = $cdnUrl;
         return $this;
     }
 
-    public function getCreated(): DateTimeInterface
-    {
-        return $this->created;
-    }
-
-    public function setCreated(DateTimeInterface $created): ImageData
-    {
-        $this->created = $created;
-        return $this;
-    }
-
-    public function getDisplayed(): DateTimeInterface
+    public function getDisplayed(): ?DateTimeInterface
     {
         return $this->displayed;
     }
 
-    public function setDisplayed(DateTimeInterface $displayed): ImageData
+    public function setDisplayed(?DateTimeInterface $displayed): ImageData
     {
         $this->displayed = $displayed;
         return $this;
     }
 
-    public function getDelivered(): DateTimeInterface
+    public function getDelivered(): ?DateTimeInterface
     {
         return $this->delivered;
     }
 
-    public function setDelivered(DateTimeInterface $delivered): ImageData
+    public function setDelivered(?DateTimeInterface $delivered): ImageData
     {
         $this->delivered = $delivered;
         return $this;
@@ -95,6 +73,28 @@ class ImageData
     public function setOwner(User $owner): ImageData
     {
         $this->owner = $owner;
+        return $this;
+    }
+
+    public function getUploaded(): ?DateTimeInterface
+    {
+        return $this->uploaded;
+    }
+
+    public function setUploaded(?DateTimeInterface $uploaded): ImageData
+    {
+        $this->uploaded = $uploaded;
+        return $this;
+    }
+
+    public function initFrom(Image $image): ImageData
+    {
+        $this->setOwner($image->getOwner());
+        $this->setFilePath($image->getFilePath());
+        $this->setUploaded($image->getUploaded());
+        $this->setDelivered($image->getDelivered());
+        $this->setDisplayed($image->getDisplayed());
+        $this->setCdnUrl($image->getCdnUrl());
         return $this;
     }
 }

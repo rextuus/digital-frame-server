@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Image;
+use Cloudinary\Api\ApiResponse;
 use Cloudinary\Api\Exception\ApiError;
 use Cloudinary\Cloudinary;
 use Cloudinary\Configuration\Configuration;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * @author  Wolfgang Hinzmann <wolfgang.hinzmann@doccheck.com>
@@ -17,36 +20,46 @@ class CloudinaryApiGateway
 
     private Cloudinary $cloudinary;
 
-    public function __construct() {
+
+    public function __construct(
+        private ParameterBagInterface $parameterBag,
+        string $cloudname,
+        string $apiKey,
+        string $apiSecret
+    ) {
         $config = new Configuration();
-        $config->cloud->cloudName = 'dl4y4cfvs';
-        $config->cloud->apiKey = '311921677578484';
-        $config->cloud->apiSecret = 'X6oJvCzY4tIBcWstDA2YPUfukmQ';
+        $config->cloud->cloudName = $cloudname;
+        $config->cloud->apiKey = $apiKey;
+        $config->cloud->apiSecret = $apiSecret;
         $config->url->secure = true;
         $this->cloudinary = new Cloudinary($config);
     }
 
-    public function test(){
+    public function test()
+    {
         $this->cloudinary->uploadApi()->upload(
             'https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg',
             ['public_id' => 'olympic_flag']
         );
     }
 
-    public function uploadImage(string $image): bool
+    public function uploadImage(Image $image): ?ApiResponse
     {
+        $path = $this->parameterBag->get('kernel.project_dir') . '/public/' . $image->getFilePath();
+        $public_id = 'digital-frame/' . $image->getOwner()->getDescription(). '/'.$image->getName();
+
+        $response = null;
         try {
-            $public_id = 'digital-frame/test';
-            $this->cloudinary->uploadApi()->upload(
-                $image,
+            $response = $this->cloudinary->uploadApi()->upload(
+                $path,
                 [
                     'public_id' => $public_id,
                 ]
             );
         } catch (ApiError $e) {
-            return false;
+            $response = null;
         }
 
-        return true;
+        return $response;
     }
 }
