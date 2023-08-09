@@ -24,7 +24,7 @@ backup:
 	./backup.sh
 
 stop_consumer:
-	stop-messenger
+	sudo systemctl stop messenger-consumer.service
 
 start_consumer:
-	start-messenger
+	sudo systemctl start messenger-consumer.service
