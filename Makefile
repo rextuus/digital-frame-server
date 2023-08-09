@@ -1,4 +1,4 @@
-deploy: pull install database build
+deploy: stop_consumer pull install database build start_consumer
 stash:
 	git stash
 
@@ -22,3 +22,9 @@ restore:
 
 backup:
 	./backup.sh
+
+stop_consumer:
+	stop-messenger
+
+start_consumer:
+	start-messenger
