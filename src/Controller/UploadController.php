@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ImageUploadType;
-use App\Service\CloudinaryApiGateway;
 use App\Service\Image\Form\ImageCreateData;
 use App\Service\Image\ImageService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class UploadController extends AbstractController
 {
     #[Route('{description}/upload', name: 'app_upload')]
-    public function index(User $user, Request $request, ImageService $imageService): Response
+    public function upload(User $user, Request $request, ImageService $imageService): Response
     {
         $form = $this->createForm(ImageUploadType::class,);
 

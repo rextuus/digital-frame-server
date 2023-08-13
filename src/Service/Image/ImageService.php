@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Image;
 
 use App\Entity\Image;
+use App\Entity\User;
 use App\Message\ImageUpload;
 use App\Repository\ImageRepository;
 use App\Service\Image\Form\ImageData;
@@ -46,5 +47,14 @@ class ImageService
     public function find(int $imageId): ?Image
     {
         return $this->repository->find($imageId);
+    }
+
+    /**
+     * @param User $frame
+     * @return Image[]
+     */
+    public function getNewUndeliveredImagesByFrame(User $frame): array
+    {
+       return $this->repository->findBy(['delivered' => null, 'owner' => $frame]);
     }
 }
