@@ -23,9 +23,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\Service\Synchronization\DigitalFrameApiGateway:
+    App\Service\CloudinaryApiGateway:
         arguments:
             $cloudname: '%app.cloudinary_name%'
+            $apiKey: '%app.cloudinary_api_key%'
+            $apiSecret: '%app.cloudinary_api_secret%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
