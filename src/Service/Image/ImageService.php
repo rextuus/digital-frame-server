@@ -55,6 +55,6 @@ class ImageService
      */
     public function getNewUndeliveredImagesByFrame(User $frame): array
     {
-       return $this->repository->findBy(['delivered' => null, 'owner' => $frame]);
+       return $this->repository->findNewUndeliveredImagesByFrame($frame);
     }
 }

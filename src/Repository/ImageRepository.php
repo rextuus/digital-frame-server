@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Image;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -25,6 +26,20 @@ class ImageRepository extends ServiceEntityRepository
     {
         $this->getEntityManager()->persist($image);
         $this->getEntityManager()->flush();
+    }
+
+    public function findNewUndeliveredImagesByFrame(User $owner): array
+    {
+        $qb = $this->createQueryBuilder('i');
+
+        $result = $qb->andWhere($qb->expr()->eq('i.owner', $owner->getId()))
+            ->andWhere($qb->expr()->isNull('i.delivered'))
+            ->andWhere($qb->expr()->isNotNull('i.uploaded'))
+            ->getQuery()
+            ->getArrayResult()
+        ;
+
+        return $result;
     }
 
 //    /**
