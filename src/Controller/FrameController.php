@@ -60,6 +60,9 @@ class FrameController extends AbstractController
     public function markImagesAsDelivered(Request $request, ImageService $imageService): Response
     {
         $postData = $request->request->all();
+        if (!array_key_exists('ids', $postData)){
+            return new JsonResponse([]);
+        }
 
         $ids = $postData['ids'];
         $updated = [];
@@ -68,6 +71,29 @@ class FrameController extends AbstractController
             if ($image){
                 $data = (new ImageData())->initFrom($image);
                 $data->setDelivered(new DateTime());
+                $imageService->update($image, $data);
+                $updated[] = $id;
+            }
+        }
+
+        return new JsonResponse($updated);
+    }
+
+    #[Route('/images/mark/displayed', name: 'api_mark_displayed', methods: ['POST'])]
+    public function markImagesAsDisplayed(Request $request, ImageService $imageService): Response
+    {
+        $postData = $request->request->all();
+        if (!array_key_exists('ids', $postData)){
+            return new JsonResponse([]);
+        };
+
+        $ids = $postData['ids'];
+        $updated = [];
+        foreach ($ids as $id) {
+            $image = $imageService->find((int) $id);
+            if ($image){
+                $data = (new ImageData())->initFrom($image);
+                $data->setDisplayed(new DateTime());
                 $imageService->update($image, $data);
                 $updated[] = $id;
             }
